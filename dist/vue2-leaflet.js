@@ -1,13 +1,13 @@
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("lodash"), require("leaflet"), require("vue"));
+		module.exports = factory(require("leaflet"), require("lodash"));
 	else if(typeof define === 'function' && define.amd)
-		define(["lodash", "leaflet", "vue"], factory);
+		define(["leaflet", "lodash"], factory);
 	else if(typeof exports === 'object')
-		exports["Vue2Leaflet"] = factory(require("lodash"), require("leaflet"), require("vue"));
+		exports["Vue2Leaflet"] = factory(require("leaflet"), require("lodash"));
 	else
-		root["Vue2Leaflet"] = factory(root["lodash"], root["leaflet"], root["vue"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE_4__, __WEBPACK_EXTERNAL_MODULE_40__, __WEBPACK_EXTERNAL_MODULE_41__) {
+		root["Vue2Leaflet"] = factory(root["leaflet"], root["lodash"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE_3__, __WEBPACK_EXTERNAL_MODULE_7__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -56,19 +56,68 @@ return /******/ (function(modules) { // webpackBootstrap
 
 	"use strict";
 	
-	exports.Map = __webpack_require__(21);
-	exports.TileLayer = __webpack_require__(25);
-	exports.Marker = __webpack_require__(22);
-	exports.Polyline = __webpack_require__(23);
-	exports.LayerGroup = __webpack_require__(20);
-	exports.GeoJSON = __webpack_require__(17);
-	exports.IconDefault = __webpack_require__(18);
-	exports.Tooltip = __webpack_require__(26);
-	exports.Popup = __webpack_require__(24);
-	exports.LCircle = __webpack_require__(19);
+	exports.Map = __webpack_require__(27);
+	exports.TileLayer = __webpack_require__(31);
+	exports.Marker = __webpack_require__(28);
+	exports.Polyline = __webpack_require__(29);
+	exports.LayerGroup = __webpack_require__(26);
+	exports.GeoJSON = __webpack_require__(23);
+	exports.IconDefault = __webpack_require__(24);
+	exports.Tooltip = __webpack_require__(32);
+	exports.Popup = __webpack_require__(30);
+	exports.LCircle = __webpack_require__(25);
 
 /***/ },
 /* 1 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _eventsBinder = __webpack_require__(19);
+	
+	var _eventsBinder2 = _interopRequireDefault(_eventsBinder);
+	
+	var _propsBinder = __webpack_require__(20);
+	
+	var _propsBinder2 = _interopRequireDefault(_propsBinder);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	module.exports = {
+	  events: [],
+	  props: [],
+	  mounted: function mounted() {
+	    console.log("Creating leaflet object...");
+	    this.$lfObj = this.createLeafletObject();
+	    if (this.$lfObj) {
+	      console.log("Binding props and events...");
+	      (0, _eventsBinder2.default)(this, this.$lfObj, this.events);
+	      (0, _propsBinder2.default)(this, this.$lfObj, this.props);
+	    }
+	    console.log("Created leaflet object...");
+	  },
+	  methods: {
+	    deferredMountedTo: function deferredMountedTo(parent) {
+	      console.log("Before deferred mount of object...");
+	      this.beforeDeferredMount(parent);
+	      if (parent) {
+	        console.log("Starting deferred mount of object children...");
+	        this.$children.forEach(function (child) {
+	          if (child.deferredMountedTo) {
+	            child.deferredMountedTo(parent);
+	          }
+	        });
+	      }
+	      console.log("After deferred mount of object...");
+	      this.afterDeferredMount(parent);
+	    },
+	    beforeDeferredMount: function beforeDeferredMount(parent) {},
+	    afterDeferredMount: function afterDeferredMount(parent) {}
+	  }
+	};
+
+/***/ },
+/* 2 */
 /***/ function(module, exports) {
 
 	module.exports = function normalizeComponent (
@@ -121,127 +170,195 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _lodash = __webpack_require__(4);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	function capitalizeFirstLetter(string) {
-	  return string.charAt(0).toUpperCase() + string.slice(1);
-	}
-	
-	exports.default = function (vueElement, leafletElement, props, options) {
-	  _lodash2.default.forEach(props, function (_ref, attribute) {
-	    var twoWay = _ref.twoWay,
-	        type = _ref.type,
-	        custom = _ref.custom,
-	        eventName = _ref.eventName;
-	
-	    var setMethodName = 'set' + capitalizeFirstLetter(attribute);
-	    vueElement.$watch(attribute, function (newVal, oldVal) {
-	      if (custom) {
-	        vueElement[setMethodName](newVal, oldVal);
-	      } else {
-	        leafletElement[setMethodName](newVal);
-	      }
-	    }, {
-	      deep: type === Object
-	    });
-	  });
-	};
-
-/***/ },
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _lodash = __webpack_require__(4);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	exports.default = function (vueElement, leaflet, events) {
-	  _lodash2.default.forEach(events, function (eventName) {
-	    var exposedName = 'l-' + eventName;
-	    leaflet.on(eventName, function (ev) {
-	      vueElement.$emit(exposedName, ev);
-	    });
-	  });
-	};
+	module.exports = require("leaflet");
 
 /***/ },
 /* 4 */
 /***/ function(module, exports) {
 
-	module.exports = require("lodash");
-
-/***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	'use strict';
+	"use strict";
 	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = {
-	  props: ['geojson', 'options'],
-	  mounted: function mounted() {
-	    this.$geoJSON = L.geoJSON(this.geojson, this.options);
+	module.exports = {
+	  beforeDestroy: function beforeDestroy() {
+	    this.removeFromParent();
 	  },
 	
 	  methods: {
-	    deferredMountedTo: function deferredMountedTo(parent) {
-	      this.$geoJSON.addTo(parent);
-	      _.forEach(this.$children, function (child) {
-	        child.deferredMountedTo(that);
-	      });
+	    afterDeferredMount: function afterDeferredMount(parent) {
+	      this.addToParent(parent);
 	    },
-	    addGeoJSONData: function addGeoJSONData(geojsonData) {
-	      this.$geoJSON.addData(geojsonData);
+	    addToParent: function addToParent(parent) {
+	      console.log("Adding to parent...");
+	      if (this.$lfObj && parent) {
+	        this.$lfParent = parent;
+	        if (!this.$lfParent.hasLayer(this.$lfObj)) {
+	          this.$lfObj.addTo(this.$lfParent);
+	        }
+	      }
 	    },
-	    getGeoJSONData: function getGeoJSONData() {
-	      return this.$geoJSON.toGeoJSON();
+	    removeFromParent: function removeFromParent() {
+	      console.log("Removing from parent...");
+	      var parentObj = null;
+	      if (this.$lfObj && this.$lfParent) {
+	        parentObj = this.$lfParent;
+	        if (this.$lfParent.hasLayer(this.$lfObj)) {
+	          this.$lfParent.removeLayer(this.$lfObj);
+	        }
+	        this.$lfParent = null;
+	      }
+	      return parentObj;
+	    }
+	  }
+	};
+
+/***/ },
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _AddToParent = __webpack_require__(4);
+	
+	var _AddToParent2 = _interopRequireDefault(_AddToParent);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	module.exports = {
+	  mixins: [_AddToParent2.default],
+	  props: {
+	    visible: {
+	      type: Boolean,
+	      custom: true,
+	      default: true
+	    }
+	  },
+	  methods: {
+	    afterDeferredMount: function afterDeferredMount(parent) {
+	      this.$lfParent = parent;
+	      this.setVisible(this.visible, !this.visible);
 	    },
-	    getBounds: function getBounds() {
-	      return this.$geoJSON.getBounds();
+	    setVisible: function setVisible(newVal, oldVal) {
+	      if (newVal == oldVal) return;
+	      if (newVal) {
+	        this.addToParent(this.$lfParent);
+	      } else {
+	        this.$lfParent = this.removeFromParent();
+	      }
 	    }
 	  }
 	};
 
 /***/ },
 /* 6 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	module.exports = {
+	  props: {
+	    content: {
+	      custom: true,
+	      default: ''
+	    }
+	  },
+	  methods: {
+	    afterDeferredMount: function afterDeferredMount(parent) {
+	      this.setContent(this.content, null);
+	    },
+	    setContent: function setContent(newVal, oldVal) {
+	      if (newVal === oldVal) return;
+	      if (this.$lfObj) {
+	        this.content = newVal;
+	        this.$lfObj.setContent(newVal);
+	      }
+	    }
+	  }
+	};
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	module.exports = require("lodash");
+
+/***/ },
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
 	
 	Object.defineProperty(exports, "__esModule", {
 	  value: true
 	});
 	
-	var _propsBinder = __webpack_require__(2);
+	var _leaflet = __webpack_require__(3);
 	
-	var _propsBinder2 = _interopRequireDefault(_propsBinder);
+	var _leaflet2 = _interopRequireDefault(_leaflet);
+	
+	var _LeafletObject = __webpack_require__(1);
+	
+	var _LeafletObject2 = _interopRequireDefault(_LeafletObject);
+	
+	var _AddToParent = __webpack_require__(4);
+	
+	var _AddToParent2 = _interopRequireDefault(_AddToParent);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var props = {
+	exports.default = {
+	  mixins: [_LeafletObject2.default, _AddToParent2.default],
+	  props: ['geojson', 'options'],
+	  methods: {
+	    createLeafletObject: function createLeafletObject() {
+	      return _leaflet2.default.geoJSON(null, this.options);
+	    },
+	    afterDeferredMount: function afterDeferredMount(parent) {
+	      this.addGeoJSONData(this.geojson);
+	    },
+	    addGeoJSONData: function addGeoJSONData(geojsonData) {
+	      if (this.$lfObj) {
+	        this.$lfObj.addData(geojsonData);
+	      }
+	    },
+	    getGeoJSONData: function getGeoJSONData() {
+	      if (this.$lfObj) {
+	        return this.$lfObj.toGeoJSON();
+	      }
+	      return null;
+	    },
+	    getBounds: function getBounds() {
+	      if (this.$lfObj) {
+	        return this.$lfObj.getBounds();
+	      }
+	      return null;
+	    }
+	  }
+	};
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _leaflet = __webpack_require__(3);
+	
+	var _leaflet2 = _interopRequireDefault(_leaflet);
+	
+	var _LeafletObject = __webpack_require__(1);
+	
+	var _LeafletObject2 = _interopRequireDefault(_LeafletObject);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var lfProps = {
 	  imagePath: {
 	    type: String,
 	    custom: true,
@@ -250,25 +367,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	exports.default = {
-	  props: props,
-	  mounted: function mounted() {
-	    L.Icon.Default.imagePath = this.imagePath;
-	    (0, _propsBinder2.default)(this, this.mapObject, props);
-	    if (this.$parent._isMounted) {
-	      this.deferredMountedTo(this.$parent.mapObject);
-	    }
-	  },
-	
+	  mixins: [_LeafletObject2.default],
+	  props: lfProps,
 	  methods: {
-	    deferredMountedTo: function deferredMountedTo(parent) {},
+	    createLeafletObject: function createLeafletObject() {
+	      this.setImagePath(this.imagePath, null);
+	      return null;
+	    },
 	    setImagePath: function setImagePath(newVal, oldVal) {
-	      L.Icon.Default.imagePath = newVal;
+	      _leaflet2.default.Icon.Default.imagePath = newVal;
 	    }
 	  }
 	};
 
 /***/ },
-/* 7 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -277,19 +390,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _eventsBinder = __webpack_require__(3);
+	var _leaflet = __webpack_require__(3);
 	
-	var _eventsBinder2 = _interopRequireDefault(_eventsBinder);
+	var _leaflet2 = _interopRequireDefault(_leaflet);
 	
-	var _propsBinder = __webpack_require__(2);
+	var _LeafletObject = __webpack_require__(1);
 	
-	var _propsBinder2 = _interopRequireDefault(_propsBinder);
+	var _LeafletObject2 = _interopRequireDefault(_LeafletObject);
+	
+	var _Visibility = __webpack_require__(5);
+	
+	var _Visibility2 = _interopRequireDefault(_Visibility);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var events = ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout', 'contextmenu', 'add', 'remove', 'popupopen', 'popupclose', 'tooltipopen', 'tooltipclose'];
+	var lfEvents = ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout', 'contextmenu', 'add', 'remove', 'popupopen', 'popupclose', 'tooltipopen', 'tooltipclose'];
 	
-	var props = {
+	var lfProps = {
 	  latLng: {
 	    type: Object
 	  },
@@ -298,11 +415,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 	  style: {
 	    type: Object
-	  },
-	  visible: {
-	    type: Boolean,
-	    custom: true,
-	    default: true
 	  },
 	  color: {
 	    type: String,
@@ -368,121 +480,100 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	exports.default = {
-	  props: props,
-	  mounted: function mounted() {
-	    var options = {};
-	    if (this.color) {
-	      options.color = this.color;
-	    }
-	    if (this.radius) {
-	      options.radius = this.radius;
-	    }
-	    this.mapObject = L.circle(this.latLng, options);
-	    (0, _eventsBinder2.default)(this, this.mapObject, events);
-	    (0, _propsBinder2.default)(this, this.mapObject, props);
-	    if (this.$parent._isMounted) {
-	      this.deferredMountedTo(this.$parent.mapObject);
-	    }
-	  },
-	  beforeDestroy: function beforeDestroy() {
-	    this.setVisible(false);
-	  },
-	
+	  mixins: [_LeafletObject2.default, _Visibility2.default],
+	  events: lfEvents,
+	  props: lfProps,
 	  methods: {
-	    deferredMountedTo: function deferredMountedTo(parent) {
-	      this.parent = parent;
-	      if (this.visible) {
-	        this.mapObject.addTo(parent);
+	    createLeafletObject: function createLeafletObject() {
+	      var options = {};
+	      if (this.color) {
+	        options.color = this.color;
 	      }
-	    },
-	    setVisible: function setVisible(newVal, oldVal) {
-	      if (newVal == oldVal) return;
-	      if (newVal) {
-	        this.mapObject.addTo(this.parent);
-	      } else {
-	        this.parent.removeLayer(this.mapObject);
+	      if (this.radius) {
+	        options.radius = this.radius;
 	      }
+	      return _leaflet2.default.circle(this.latLng, options);
 	    },
 	    setColor: function setColor(newVal, oldVal) {
 	      if (newVal == oldVal) return;
 	      if (newVal) {
-	        this.mapObject.setStyle({ color: newVal });
+	        this.$lfObj.setStyle({ color: newVal });
 	      }
 	    },
 	    setWeight: function setWeight(newVal, oldVal) {
 	      if (newVal == oldVal) return;
 	      if (newVal) {
-	        this.mapObject.setStyle({ weight: newVal });
+	        this.$lfObj.setStyle({ weight: newVal });
 	      }
 	    },
 	    setOpacity: function setOpacity(newVal, oldVal) {
 	      if (newVal == oldVal) return;
 	      if (newVal) {
-	        this.mapObject.setStyle({ opacity: newVal });
+	        this.$lfObj.setStyle({ opacity: newVal });
 	      }
 	    },
 	    setLineCap: function setLineCap(newVal, oldVal) {
 	      if (newVal == oldVal) return;
 	      if (newVal) {
-	        this.mapObject.setStyle({ lineCap: newVal });
+	        this.$lfObj.setStyle({ lineCap: newVal });
 	      }
 	    },
 	    setLineJoin: function setLineJoin(newVal, oldVal) {
 	      if (newVal == oldVal) return;
 	      if (newVal) {
-	        this.mapObject.setStyle({ lineJoin: newVal });
+	        this.$lfObj.setStyle({ lineJoin: newVal });
 	      }
 	    },
 	    setDashArray: function setDashArray(newVal, oldVal) {
 	      if (newVal == oldVal) return;
 	      if (newVal) {
-	        this.mapObject.setStyle({ dashArray: newVal });
+	        this.$lfObj.setStyle({ dashArray: newVal });
 	      }
 	    },
 	    setDashOffset: function setDashOffset(newVal, oldVal) {
 	      if (newVal == oldVal) return;
 	      if (newVal) {
-	        this.mapObject.setStyle({ dashOffset: newVal });
+	        this.$lfObj.setStyle({ dashOffset: newVal });
 	      }
 	    },
 	    setFill: function setFill(newVal, oldVal) {
 	      if (newVal == oldVal) return;
 	      if (newVal) {
-	        this.mapObject.setStyle({ fill: newVal });
+	        this.$lfObj.setStyle({ fill: newVal });
 	      }
 	    },
 	    setFillColor: function setFillColor(newVal, oldVal) {
 	      if (newVal == oldVal) return;
 	      if (newVal) {
-	        this.mapObject.setStyle({ fillColor: newVal });
+	        this.$lfObj.setStyle({ fillColor: newVal });
 	      }
 	    },
 	    setFillOpacity: function setFillOpacity(newVal, oldVal) {
 	      if (newVal == oldVal) return;
 	      if (newVal) {
-	        this.mapObject.setStyle({ fillOpacity: newVal });
+	        this.$lfObj.setStyle({ fillOpacity: newVal });
 	      }
 	    },
 	    setFillRule: function setFillRule(newVal, oldVal) {
 	      if (newVal == oldVal) return;
 	      if (newVal) {
-	        this.mapObject.setStyle({ fillRule: newVal });
+	        this.$lfObj.setStyle({ fillRule: newVal });
 	      }
 	    },
 	    setClassName: function setClassName(newVal, oldVal) {
 	      if (newVal == oldVal) return;
 	      if (newVal) {
-	        this.mapObject.setStyle({ className: newVal });
+	        this.$lfObj.setStyle({ className: newVal });
 	      }
 	    },
 	    addLatLng: function addLatLng(value) {
-	      this.mapObject.addLatLng(value);
+	      this.$lfObj.addLatLng(value);
 	    }
 	  }
 	};
 
 /***/ },
-/* 8 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -491,90 +582,52 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _propsBinder = __webpack_require__(2);
-	
-	var _propsBinder2 = _interopRequireDefault(_propsBinder);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var props = {
-	  visible: {
-	    type: Boolean,
-	    custom: true,
-	    default: true
-	  }
-	};
-	
-	exports.default = {
-	  props: props,
-	  mounted: function mounted() {
-	    this.mapObject = L.layerGroup();
-	    (0, _propsBinder2.default)(this, this.mapObject, props);
-	    if (this.$parent._isMounted) {
-	      this.deferredMountedTo(this.$parent.mapObject);
-	    }
-	  },
-	  beforeDestroy: function beforeDestroy() {
-	    this.setVisible(false);
-	  },
-	
-	  methods: {
-	    deferredMountedTo: function deferredMountedTo(parent) {
-	      var that = this.mapObject;
-	      this.parent = parent;
-	      _.forEach(this.$children, function (child) {
-	        child.deferredMountedTo(that);
-	      });
-	      if (this.visible) {
-	        this.mapObject.addTo(parent);
-	      }
-	    },
-	    setVisible: function setVisible(newVal, oldVal) {
-	      if (newVal == oldVal) return;
-	      if (newVal) {
-	        this.mapObject.addTo(this.parent);
-	      } else {
-	        this.parent.removeLayer(this.mapObject);
-	      }
-	    }
-	  }
-	};
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _lodash = __webpack_require__(4);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	var _vue = __webpack_require__(41);
-	
-	var _vue2 = _interopRequireDefault(_vue);
-	
-	var _leaflet = __webpack_require__(40);
+	var _leaflet = __webpack_require__(3);
 	
 	var _leaflet2 = _interopRequireDefault(_leaflet);
 	
-	var _eventsBinder = __webpack_require__(3);
+	var _LeafletObject = __webpack_require__(1);
 	
-	var _eventsBinder2 = _interopRequireDefault(_eventsBinder);
+	var _LeafletObject2 = _interopRequireDefault(_LeafletObject);
 	
-	var _propsBinder = __webpack_require__(2);
+	var _Visibility = __webpack_require__(5);
 	
-	var _propsBinder2 = _interopRequireDefault(_propsBinder);
+	var _Visibility2 = _interopRequireDefault(_Visibility);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var events = ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'contextmenu', 'focus', 'blur', 'preclick', 'load', 'unload', 'viewreset', 'movestart', 'move', 'moveend', 'dragstart', 'drag', 'dragend', 'zoomstart', 'zoomend', 'zoomanim', 'zoomlevelschange', 'resize', 'autopanstart', 'layeradd', 'layerremove', 'baselayerchange', 'overlayadd', 'overlayremove', 'locationfound', 'locationerror', 'popupopen', 'popupclose'];
+	exports.default = {
+	  mixins: [_LeafletObject2.default, _Visibility2.default],
+	  methods: {
+	    createLeafletObject: function createLeafletObject() {
+	      return _leaflet2.default.layerGroup();
+	    }
+	  }
+	};
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 	
-	var props = {
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _leaflet = __webpack_require__(3);
+	
+	var _leaflet2 = _interopRequireDefault(_leaflet);
+	
+	var _LeafletObject = __webpack_require__(1);
+	
+	var _LeafletObject2 = _interopRequireDefault(_LeafletObject);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var lfEvents = ['click', 'dblclick', 'mousedown', 'mouseup', 'mouseover', 'mouseout', 'mousemove', 'contextmenu', 'focus', 'blur', 'preclick', 'load', 'unload', 'viewreset', 'movestart', 'move', 'moveend', 'dragstart', 'drag', 'dragend', 'zoomstart', 'zoomend', 'zoomanim', 'zoomlevelschange', 'resize', 'autopanstart', 'layeradd', 'layerremove', 'baselayerchange', 'overlayadd', 'overlayremove', 'locationfound', 'locationerror', 'popupopen', 'popupclose'];
+	
+	var lfProps = {
 	  center: {
 	    custom: true,
 	    default: undefined
@@ -614,36 +667,38 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 	
 	exports.default = {
-	  props: props,
+	  mixins: [_LeafletObject2.default],
+	  events: lfEvents,
+	  props: lfProps,
 	  mounted: function mounted() {
-	    this.mapObject = _leaflet2.default.map(this.$el, {
-	      center: this.center,
-	      zoom: this.zoom,
-	      minZoom: this.minZoom,
-	      maxZoom: this.maxZoom,
-	      worldCopyJump: this.worldCopyJump
-	    });
-	    (0, _eventsBinder2.default)(this, this.mapObject, events);
-	    (0, _propsBinder2.default)(this, this.mapObject, props);
-	    var that = this.mapObject;
-	    _lodash2.default.forEach(this.$children, function (child) {
-	      child.deferredMountedTo(that);
-	    });
-	    this.setBounds(this.bounds);
-	    this.mapObject.whenReady(function () {
-	      this.$emit('l-ready');
-	    }, this);
+	    console.log("Starting deferred mount of map...");
+	    this.deferredMountedTo(this.$lfObj);
 	  },
-	
 	  methods: {
+	    createLeafletObject: function createLeafletObject() {
+	      console.log("Creating map...");
+	      return _leaflet2.default.map(this.$el, {
+	        center: this.center,
+	        zoom: this.zoom,
+	        minZoom: this.minZoom,
+	        maxZoom: this.maxZoom,
+	        worldCopyJump: this.worldCopyJump
+	      });
+	    },
+	    afterDeferredMount: function afterDeferredMount(parent) {
+	      console.log("After deferred mount map...");
+	      this.setBounds(this.bounds);
+	      this.$lfObj.whenReady(function () {
+	        this.$emit('l-ready');
+	      }, this);
+	    },
 	    setCenter: function setCenter(newVal, oldVal) {
-	      this.mapObject.setView(newVal, this.zoom);
+	      this.$lfObj.setView(newVal, this.zoom);
 	    },
 	    setBounds: function setBounds(newVal, oldVal) {
 	      if (!(newVal && newVal.isValid())) {
 	        return;
 	      }
-	
 	      var options = {};
 	      if (this.padding) {
 	        options.padding = this.padding;
@@ -655,7 +710,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          options.paddingTopLeft = this.paddingTopLeft;
 	        }
 	      }
-	      this.mapObject.fitBounds(newVal, options);
+	      this.$lfObj.fitBounds(newVal, options);
 	    },
 	    setPaddingBottomRight: function setPaddingBottomRight(newVal, oldVal) {
 	      this.paddingBottomRight = newVal;
@@ -670,7 +725,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 10 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -679,28 +734,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _eventsBinder = __webpack_require__(3);
+	var _leaflet = __webpack_require__(3);
 	
-	var _eventsBinder2 = _interopRequireDefault(_eventsBinder);
+	var _leaflet2 = _interopRequireDefault(_leaflet);
 	
-	var _propsBinder = __webpack_require__(2);
+	var _LeafletObject = __webpack_require__(1);
 	
-	var _propsBinder2 = _interopRequireDefault(_propsBinder);
+	var _LeafletObject2 = _interopRequireDefault(_LeafletObject);
+	
+	var _Visibility = __webpack_require__(5);
+	
+	var _Visibility2 = _interopRequireDefault(_Visibility);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var events = ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout', 'contextmenu', 'dragstart', 'drag', 'dragend', 'move', 'add', 'remove', 'popupopen', 'popupclose', 'tooltipopen', 'tooltipclose'];
+	var lfEvents = ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout', 'contextmenu', 'dragstart', 'drag', 'dragend', 'move', 'add', 'remove', 'popupopen', 'popupclose', 'tooltipopen', 'tooltipclose'];
 	
-	var props = {
+	var lfProps = {
 	  draggable: {
 	    type: Boolean,
 	    custom: true,
 	    default: false
-	  },
-	  visible: {
-	    type: Boolean,
-	    custom: true,
-	    default: true
 	  },
 	  latLng: {
 	    type: Object
@@ -708,228 +762,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	  icon: {
 	    custom: false,
 	    default: function _default() {
-	      return new L.Icon.Default();
+	      return new _leaflet2.default.Icon.Default();
 	    }
 	  }
 	};
 	
 	exports.default = {
-	  props: props,
-	  mounted: function mounted() {
-	    var options = {};
-	    if (this.icon) {
-	      options.icon = this.icon;
-	    }
-	    options.draggable = this.draggable;
-	    this.mapObject = L.marker(this.latLng, options);
-	    (0, _eventsBinder2.default)(this, this.mapObject, events);
-	    (0, _propsBinder2.default)(this, this.mapObject, props);
-	    if (this.$parent._isMounted) {
-	      this.deferredMountedTo(this.$parent.mapObject);
-	    }
-	  },
-	  beforeDestroy: function beforeDestroy() {
-	    this.setVisible(false);
-	  },
-	
+	  mixins: [_LeafletObject2.default, _Visibility2.default],
+	  events: lfEvents,
+	  props: lfProps,
 	  methods: {
-	    deferredMountedTo: function deferredMountedTo(parent) {
-	      this.parent = parent;
-	      var that = this.mapObject;
-	      _.forEach(this.$children, function (child) {
-	        child.deferredMountedTo(that);
-	      });
-	      if (this.visible) {
-	        this.mapObject.addTo(parent);
+	    createLeafletObject: function createLeafletObject() {
+	      console.log("Creating marker...");
+	      var options = {
+	        draggable: this.draggable
+	      };
+	      if (this.icon) {
+	        options.icon = this.icon;
 	      }
+	      return _leaflet2.default.marker(this.latLng, options);
+	    },
+	    beforeDeferredMount: function beforeDeferredMount(parent) {
+	      console.log("Before deferred mount marker...");
 	    },
 	    setDraggable: function setDraggable(newVal, oldVal) {
-	      if (this.mapObject.dragging) {
-	        newVal ? this.mapObject.dragging.enable() : this.mapObject.dragging.disable();
+	      if (this.$lfObj.dragging) {
+	        newVal ? this.$lfObj.dragging.enable() : this.$lfObj.dragging.disable();
 	      }
-	    },
-	    setVisible: function setVisible(newVal, oldVal) {
-	      if (newVal == oldVal) return;
-	      if (this.mapObject) {
-	        if (newVal) {
-	          this.mapObject.addTo(this.parent);
-	        } else {
-	          this.parent.removeLayer(this.mapObject);
-	        }
-	      }
-	    }
-	  }
-	};
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _eventsBinder = __webpack_require__(3);
-	
-	var _eventsBinder2 = _interopRequireDefault(_eventsBinder);
-	
-	var _propsBinder = __webpack_require__(2);
-	
-	var _propsBinder2 = _interopRequireDefault(_propsBinder);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var events = ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout', 'contextmenu', 'add', 'remove', 'popupopen', 'popupclose', 'tooltipopen', 'tooltipclose'];
-	
-	var props = {
-	  latLngs: {
-	    type: Array,
-	    default: []
-	  },
-	  style: {
-	    type: Object
-	  },
-	  visible: {
-	    type: Boolean,
-	    custom: true,
-	    default: true
-	  },
-	  color: {
-	    type: String,
-	    custom: true,
-	    default: 'red'
-	  }
-	};
-	
-	exports.default = {
-	  props: props,
-	  mounted: function mounted() {
-	    this.mapObject = L.polyline(this.latLngs, { color: this.color });
-	    (0, _eventsBinder2.default)(this, this.mapObject, events);
-	    (0, _propsBinder2.default)(this, this.mapObject, props);
-	    if (this.$parent._isMounted) {
-	      this.deferredMountedTo(this.$parent.mapObject);
-	    }
-	  },
-	  beforeDestroy: function beforeDestroy() {
-	    this.setVisible(false);
-	  },
-	
-	  methods: {
-	    deferredMountedTo: function deferredMountedTo(parent) {
-	      this.parent = parent;
-	      if (this.visible) {
-	        this.mapObject.addTo(parent);
-	      }
-	    },
-	    setVisible: function setVisible(newVal, oldVal) {
-	      if (newVal == oldVal) return;
-	      if (newVal) {
-	        this.mapObject.addTo(this.parent);
-	      } else {
-	        this.parent.removeLayer(this.mapObject);
-	      }
-	    },
-	    setColor: function setColor(newVal, oldVal) {
-	      if (newVal == oldVal) return;
-	      if (newVal) {
-	        this.mapObject.setStyle({ color: newVal });
-	      }
-	    },
-	    addLatLng: function addLatLng(value) {
-	      this.mapObject.addLatLng(value);
-	    }
-	  }
-	};
-
-/***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _eventsBinder = __webpack_require__(3);
-	
-	var _eventsBinder2 = _interopRequireDefault(_eventsBinder);
-	
-	var _propsBinder = __webpack_require__(2);
-	
-	var _propsBinder2 = _interopRequireDefault(_propsBinder);
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-	
-	var events = ['add', 'remove', 'popupopen', 'popupclose', 'tooltipopen', 'tooltipclose'];
-	
-	var props = {
-	  content: {
-	    custom: true,
-	    default: ''
-	  }
-	};
-	
-	exports.default = {
-	  props: props,
-	  mounted: function mounted() {
-	    this.mapObject = L.popup();
-	    (0, _eventsBinder2.default)(this, this.mapObject, events);
-	    (0, _propsBinder2.default)(this, this.mapObject, props);
-	    if (this.$parent._isMounted) {
-	      this.deferredMountedTo(this.$parent.mapObject);
-	    }
-	  },
-	  beforeDestroy: function beforeDestroy() {
-	    if (this.parent.getPopup()) {
-	      this.parent.unbindPopup();
-	    }
-	  },
-	
-	  methods: {
-	    deferredMountedTo: function deferredMountedTo(parent) {
-	      this.parent = parent;
-	      parent.bindPopup(this.content);
-	    },
-	    setContent: function setContent(newVal, oldVal) {
-	      if (newVal) {
-	        this.parent.bindPopup(this.content);
-	      } else {
-	        if (this.parent.getPopup()) {
-	          this.parent.unbindPopup();
-	        }
-	      }
-	    }
-	  }
-	};
-
-/***/ },
-/* 13 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = {
-	  props: ['url', 'attribution', 'token'],
-	  mounted: function mounted() {
-	    this.$tileLayer = L.tileLayer(this.url, {
-	      attribution: this.attribution,
-	      token: this.token
-	    });
-	  },
-	
-	  methods: {
-	    deferredMountedTo: function deferredMountedTo(parent) {
-	      this.$tileLayer.addTo(parent);
-	      _.forEach(this.$children, function (child) {
-	        child.deferredMountedTo(that);
-	      });
 	    }
 	  }
 	};
@@ -944,58 +803,53 @@ return /******/ (function(modules) { // webpackBootstrap
 	  value: true
 	});
 	
-	var _eventsBinder = __webpack_require__(3);
+	var _leaflet = __webpack_require__(3);
 	
-	var _eventsBinder2 = _interopRequireDefault(_eventsBinder);
+	var _leaflet2 = _interopRequireDefault(_leaflet);
 	
-	var _propsBinder = __webpack_require__(2);
+	var _LeafletObject = __webpack_require__(1);
 	
-	var _propsBinder2 = _interopRequireDefault(_propsBinder);
+	var _LeafletObject2 = _interopRequireDefault(_LeafletObject);
+	
+	var _Visibility = __webpack_require__(5);
+	
+	var _Visibility2 = _interopRequireDefault(_Visibility);
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
-	var events = ['add', 'remove', 'popupopen', 'popupclose', 'tooltipopen', 'tooltipclose'];
+	var lfEvents = ['click', 'dblclick', 'mousedown', 'mouseover', 'mouseout', 'contextmenu', 'add', 'remove', 'popupopen', 'popupclose', 'tooltipopen', 'tooltipclose'];
 	
-	var props = {
-	  content: {
+	var lfProps = {
+	  latLngs: {
+	    type: Array,
+	    default: []
+	  },
+	  style: {
+	    type: Object
+	  },
+	  color: {
 	    type: String,
 	    custom: true,
-	    default: ''
+	    default: 'red'
 	  }
 	};
 	
 	exports.default = {
-	  props: props,
-	  mounted: function mounted() {
-	    this.mapObject = L.tooltip();
-	    this.mapObject.setTooltipContent(this.content);
-	    (0, _eventsBinder2.default)(this, this.mapObject, events);
-	    (0, _propsBinder2.default)(this, this.mapObject, props);
-	    if (this.$parent._isMounted) {
-	      this.deferredMountedTo(this.$parent.mapObject);
-	    }
-	  },
-	  beforeDestroy: function beforeDestroy() {
-	    if (this.parent.getTooltip()) {
-	      this.parent.unbindTooltip();
-	    }
-	  },
-	
+	  mixins: [_LeafletObject2.default, _Visibility2.default],
+	  events: lfEvents,
+	  props: lfProps,
 	  methods: {
-	    deferredMountedTo: function deferredMountedTo(parent) {
-	      this.parent = parent;
-	      if (this.content) {
-	        this.parent.bindTooltip(this.content);
+	    createLeafletObject: function createLeafletObject() {
+	      return _leaflet2.default.polyline(this.latLngs, { color: this.color });
+	    },
+	    setColor: function setColor(newVal, oldVal) {
+	      if (newVal == oldVal) return;
+	      if (newVal) {
+	        this.$lfObj.setStyle({ color: newVal });
 	      }
 	    },
-	    setContent: function setContent(newVal, oldVal) {
-	      if (newVal) {
-	        this.parent.bindTooltip(this.content);
-	      } else {
-	        if (this.parent.getTooltip()) {
-	          this.parent.unbindTooltip();
-	        }
-	      }
+	    addLatLng: function addLatLng(value) {
+	      this.$lfObj.addLatLng(value);
 	    }
 	  }
 	};
@@ -1004,7 +858,253 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(16)();
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _leaflet = __webpack_require__(3);
+	
+	var _leaflet2 = _interopRequireDefault(_leaflet);
+	
+	var _LeafletObject = __webpack_require__(1);
+	
+	var _LeafletObject2 = _interopRequireDefault(_LeafletObject);
+	
+	var _AddToParent = __webpack_require__(4);
+	
+	var _AddToParent2 = _interopRequireDefault(_AddToParent);
+	
+	var _ContentEditable = __webpack_require__(6);
+	
+	var _ContentEditable2 = _interopRequireDefault(_ContentEditable);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var lfEvents = ['add', 'remove', 'popupopen', 'popupclose', 'tooltipopen', 'tooltipclose'];
+	
+	exports.default = {
+	  mixins: [_LeafletObject2.default, _AddToParent2.default, _ContentEditable2.default],
+	  events: lfEvents,
+	  methods: {
+	    createLeafletObject: function createLeafletObject() {
+	      return _leaflet2.default.popup();
+	    },
+	    addToParent: function addToParent(parent) {
+	      if (this.$lfObj && parent && parent.$lfObj) {
+	        this.$lfParent = parent.$lfObj;
+	        this.$lfParent.bindPopup(this.$lfObj);
+	      }
+	    },
+	    removeFromParent: function removeFromParent() {
+	      var parentObj = null;
+	      if (this.$lfObj && this.$lfParent && this.$lfParent.getPopup() === this.$lfObj) {
+	        parentObj = this.$lfParent;
+	        this.$lfParent.unbindPopup();
+	      }
+	      this.$lfParent = null;
+	      return parentObj;
+	    }
+	  }
+	};
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _leaflet = __webpack_require__(3);
+	
+	var _leaflet2 = _interopRequireDefault(_leaflet);
+	
+	var _LeafletObject = __webpack_require__(1);
+	
+	var _LeafletObject2 = _interopRequireDefault(_LeafletObject);
+	
+	var _AddToParent = __webpack_require__(4);
+	
+	var _AddToParent2 = _interopRequireDefault(_AddToParent);
+	
+	var _Layer = __webpack_require__(18);
+	
+	var _Layer2 = _interopRequireDefault(_Layer);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = {
+	  mixins: [_LeafletObject2.default, _AddToParent2.default, _Layer2.default],
+	  props: ['url', 'attribution', 'token'],
+	  methods: {
+	    createLeafletObject: function createLeafletObject() {
+	      console.log("Creating tile layer...");
+	      return _leaflet2.default.tileLayer(this.url, {
+	        attribution: this.attribution,
+	        token: this.token
+	      });
+	    },
+	    beforeDeferredMount: function beforeDeferredMount(parent) {
+	      console.log("Before deferred mount tile layer...");
+	    }
+	  }
+	};
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _leaflet = __webpack_require__(3);
+	
+	var _leaflet2 = _interopRequireDefault(_leaflet);
+	
+	var _LeafletObject = __webpack_require__(1);
+	
+	var _LeafletObject2 = _interopRequireDefault(_LeafletObject);
+	
+	var _AddToParent = __webpack_require__(4);
+	
+	var _AddToParent2 = _interopRequireDefault(_AddToParent);
+	
+	var _ContentEditable = __webpack_require__(6);
+	
+	var _ContentEditable2 = _interopRequireDefault(_ContentEditable);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	var lfEvents = ['add', 'remove', 'popupopen', 'popupclose', 'tooltipopen', 'tooltipclose'];
+	
+	exports.default = {
+	  mixins: [_LeafletObject2.default, _AddToParent2.default, _ContentEditable2.default],
+	  events: lfEvents,
+	  methods: {
+	    createLeafletObject: function createLeafletObject() {
+	      return _leaflet2.default.tooltip();
+	    },
+	    addToParent: function addToParent(parent) {
+	      if (this.$lfObj && parent && parent.$lfObj) {
+	        this.$lfParent = parent.$lfObj;
+	        this.$lfParent.bindTooltip(this.$lfObj);
+	      }
+	    },
+	    removeFromParent: function removeFromParent() {
+	      var parentObj = null;
+	      if (this.$lfObj && this.$lfParent && this.$lfParent.getTooltip() === this.$lfObj) {
+	        parentObj = this.$lfParent;
+	        this.$lfParent.unbindTooltip();
+	      }
+	      this.$lfParent = null;
+	      return parentObj;
+	    }
+	  }
+	};
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = {
+	  props: {
+	    zIndex: {
+	      type: Number,
+	      default: 1
+	    },
+	    pane: {
+	      type: String,
+	      default: null
+	    }
+	  },
+	  methods: {
+	    setZIndex: function setZIndex(zIndex) {
+	      if (this.$lfObj) {
+	        this.$lfObj.setZIndex(zIndex);
+	      }
+	    }
+	  }
+	};
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _lodash = __webpack_require__(7);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	exports.default = function (vueElement, leaflet, events) {
+	  _lodash2.default.forEach(events, function (eventName) {
+	    var exposedName = 'l-' + eventName;
+	    leaflet.on(eventName, function (ev) {
+	      vueElement.$emit(exposedName, ev);
+	    });
+	  });
+	};
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _lodash = __webpack_require__(7);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function capitalizeFirstLetter(string) {
+	  return string.charAt(0).toUpperCase() + string.slice(1);
+	}
+	
+	exports.default = function (vueElement, leafletElement, props, options) {
+	  _lodash2.default.forEach(props, function (_ref, attribute) {
+	    var twoWay = _ref.twoWay,
+	        type = _ref.type,
+	        custom = _ref.custom,
+	        eventName = _ref.eventName;
+	
+	    var setMethodName = 'set' + capitalizeFirstLetter(attribute);
+	    vueElement.$watch(attribute, function (newVal, oldVal) {
+	      if (custom) {
+	        vueElement[setMethodName](newVal, oldVal);
+	      } else {
+	        leafletElement[setMethodName](newVal);
+	      }
+	    }, {
+	      deep: type === Object
+	    });
+	  });
+	};
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(22)();
 	// imports
 	
 	
@@ -1015,7 +1115,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 16 */
+/* 22 */
 /***/ function(module, exports) {
 
 	/*
@@ -1071,126 +1171,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Component = __webpack_require__(1)(
-	  /* script */
-	  __webpack_require__(5),
-	  /* template */
-	  __webpack_require__(28),
-	  /* scopeId */
-	  null,
-	  /* cssModules */
-	  null
-	)
-	
-	module.exports = Component.exports
-
-
-/***/ },
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Component = __webpack_require__(1)(
-	  /* script */
-	  __webpack_require__(6),
-	  /* template */
-	  __webpack_require__(27),
-	  /* scopeId */
-	  null,
-	  /* cssModules */
-	  null
-	)
-	
-	module.exports = Component.exports
-
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Component = __webpack_require__(1)(
-	  /* script */
-	  __webpack_require__(7),
-	  /* template */
-	  __webpack_require__(34),
-	  /* scopeId */
-	  null,
-	  /* cssModules */
-	  null
-	)
-	
-	module.exports = Component.exports
-
-
-/***/ },
-/* 20 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Component = __webpack_require__(1)(
-	  /* script */
-	  __webpack_require__(8),
-	  /* template */
-	  __webpack_require__(33),
-	  /* scopeId */
-	  null,
-	  /* cssModules */
-	  null
-	)
-	
-	module.exports = Component.exports
-
-
-/***/ },
-/* 21 */
-/***/ function(module, exports, __webpack_require__) {
-
-	
-	/* styles */
-	__webpack_require__(37)
-	
-	var Component = __webpack_require__(1)(
-	  /* script */
-	  __webpack_require__(9),
-	  /* template */
-	  __webpack_require__(29),
-	  /* scopeId */
-	  null,
-	  /* cssModules */
-	  null
-	)
-	
-	module.exports = Component.exports
-
-
-/***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Component = __webpack_require__(1)(
-	  /* script */
-	  __webpack_require__(10),
-	  /* template */
-	  __webpack_require__(32),
-	  /* scopeId */
-	  null,
-	  /* cssModules */
-	  null
-	)
-	
-	module.exports = Component.exports
-
-
-/***/ },
 /* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Component = __webpack_require__(1)(
+	var Component = __webpack_require__(2)(
 	  /* script */
-	  __webpack_require__(11),
+	  __webpack_require__(8),
 	  /* template */
-	  __webpack_require__(36),
+	  __webpack_require__(34),
 	  /* scopeId */
 	  null,
 	  /* cssModules */
@@ -1204,7 +1192,65 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Component = __webpack_require__(1)(
+	var Component = __webpack_require__(2)(
+	  /* script */
+	  __webpack_require__(9),
+	  /* template */
+	  __webpack_require__(33),
+	  /* scopeId */
+	  null,
+	  /* cssModules */
+	  null
+	)
+	
+	module.exports = Component.exports
+
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Component = __webpack_require__(2)(
+	  /* script */
+	  __webpack_require__(10),
+	  /* template */
+	  __webpack_require__(40),
+	  /* scopeId */
+	  null,
+	  /* cssModules */
+	  null
+	)
+	
+	module.exports = Component.exports
+
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Component = __webpack_require__(2)(
+	  /* script */
+	  __webpack_require__(11),
+	  /* template */
+	  __webpack_require__(39),
+	  /* scopeId */
+	  null,
+	  /* cssModules */
+	  null
+	)
+	
+	module.exports = Component.exports
+
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	
+	/* styles */
+	__webpack_require__(43)
+	
+	var Component = __webpack_require__(2)(
 	  /* script */
 	  __webpack_require__(12),
 	  /* template */
@@ -1219,14 +1265,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 25 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Component = __webpack_require__(1)(
+	var Component = __webpack_require__(2)(
 	  /* script */
 	  __webpack_require__(13),
 	  /* template */
-	  __webpack_require__(30),
+	  __webpack_require__(38),
 	  /* scopeId */
 	  null,
 	  /* cssModules */
@@ -1237,14 +1283,14 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 26 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Component = __webpack_require__(1)(
+	var Component = __webpack_require__(2)(
 	  /* script */
 	  __webpack_require__(14),
 	  /* template */
-	  __webpack_require__(31),
+	  __webpack_require__(42),
 	  /* scopeId */
 	  null,
 	  /* cssModules */
@@ -1255,15 +1301,61 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 27 */
-/***/ function(module, exports) {
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
 
-	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-	  return _c('div')
-	},staticRenderFns: []}
+	var Component = __webpack_require__(2)(
+	  /* script */
+	  __webpack_require__(15),
+	  /* template */
+	  __webpack_require__(41),
+	  /* scopeId */
+	  null,
+	  /* cssModules */
+	  null
+	)
+	
+	module.exports = Component.exports
+
 
 /***/ },
-/* 28 */
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Component = __webpack_require__(2)(
+	  /* script */
+	  __webpack_require__(16),
+	  /* template */
+	  __webpack_require__(36),
+	  /* scopeId */
+	  null,
+	  /* cssModules */
+	  null
+	)
+	
+	module.exports = Component.exports
+
+
+/***/ },
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Component = __webpack_require__(2)(
+	  /* script */
+	  __webpack_require__(17),
+	  /* template */
+	  __webpack_require__(37),
+	  /* scopeId */
+	  null,
+	  /* cssModules */
+	  null
+	)
+	
+	module.exports = Component.exports
+
+
+/***/ },
+/* 33 */
 /***/ function(module, exports) {
 
 	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
@@ -1271,13 +1363,21 @@ return /******/ (function(modules) { // webpackBootstrap
 	},staticRenderFns: []}
 
 /***/ },
-/* 29 */
+/* 34 */
+/***/ function(module, exports) {
+
+	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+	  return _c("div")
+	},staticRenderFns: []}
+
+/***/ },
+/* 35 */
 /***/ function(module, exports) {
 
 	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
 	  return _c('div', {
 	    staticClass: "map-container"
-	  }, [_vm._m(0), _vm._v(" "), _c('div', [_vm._t("default")], 2)])
+	  }, [_vm._m(0), _vm._v(" "), _vm._t("default")], 2)
 	},staticRenderFns: [function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
 	  return _c('div', {
 	    staticClass: "map-container"
@@ -1289,73 +1389,73 @@ return /******/ (function(modules) { // webpackBootstrap
 	}]}
 
 /***/ },
-/* 30 */
-/***/ function(module, exports) {
-
-	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-	  return _c("div")
-	},staticRenderFns: []}
-
-/***/ },
-/* 31 */
-/***/ function(module, exports) {
-
-	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-	  return _c("div")
-	},staticRenderFns: []}
-
-/***/ },
-/* 32 */
-/***/ function(module, exports) {
-
-	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-	  return _c('div', [_vm._t("default")], 2)
-	},staticRenderFns: []}
-
-/***/ },
-/* 33 */
-/***/ function(module, exports) {
-
-	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-	  return _c('div', [_vm._t("default")], 2)
-	},staticRenderFns: []}
-
-/***/ },
-/* 34 */
-/***/ function(module, exports) {
-
-	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-	  return _c('div', [_vm._t("default")], 2)
-	},staticRenderFns: []}
-
-/***/ },
-/* 35 */
-/***/ function(module, exports) {
-
-	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-	  return _c("div")
-	},staticRenderFns: []}
-
-/***/ },
 /* 36 */
 /***/ function(module, exports) {
 
 	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-	  return _c('div', [_vm._t("default")], 2)
+	  return _c("div")
 	},staticRenderFns: []}
 
 /***/ },
 /* 37 */
+/***/ function(module, exports) {
+
+	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+	  return _c("div")
+	},staticRenderFns: []}
+
+/***/ },
+/* 38 */
+/***/ function(module, exports) {
+
+	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+	  return _c('div', [_vm._t("default")], 2)
+	},staticRenderFns: []}
+
+/***/ },
+/* 39 */
+/***/ function(module, exports) {
+
+	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+	  return _c('div', [_vm._t("default")], 2)
+	},staticRenderFns: []}
+
+/***/ },
+/* 40 */
+/***/ function(module, exports) {
+
+	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+	  return _c('div', [_vm._t("default")], 2)
+	},staticRenderFns: []}
+
+/***/ },
+/* 41 */
+/***/ function(module, exports) {
+
+	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+	  return _c("div")
+	},staticRenderFns: []}
+
+/***/ },
+/* 42 */
+/***/ function(module, exports) {
+
+	module.exports={render:function (){var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+	  return _c('div', [_vm._t("default")], 2)
+	},staticRenderFns: []}
+
+/***/ },
+/* 43 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 	
 	// load the styles
-	var content = __webpack_require__(15);
+	var content = __webpack_require__(21);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	if(content.locals) module.exports = content.locals;
 	// add the styles to the DOM
-	var update = __webpack_require__(38)("27cb3c18", content, true);
+	var update = __webpack_require__(44)("27cb3c18", content, true);
 	// Hot Module Replacement
 	if(false) {
 	 // When the styles change, update the <style> tags
@@ -1371,7 +1471,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	}
 
 /***/ },
-/* 38 */
+/* 44 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -1390,7 +1490,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  ) }
 	}
 	
-	var listToStyles = __webpack_require__(39)
+	var listToStyles = __webpack_require__(45)
 	
 	/*
 	type StyleObject = {
@@ -1607,7 +1707,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 /***/ },
-/* 39 */
+/* 45 */
 /***/ function(module, exports) {
 
 	/**
@@ -1638,18 +1738,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return styles
 	}
 
-
-/***/ },
-/* 40 */
-/***/ function(module, exports) {
-
-	module.exports = require("leaflet");
-
-/***/ },
-/* 41 */
-/***/ function(module, exports) {
-
-	module.exports = require("vue");
 
 /***/ }
 /******/ ])

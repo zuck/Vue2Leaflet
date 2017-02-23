@@ -5,11 +5,11 @@
 </template>
 
 <script>
+import L from 'leaflet';
+import LeafletObject from '../mixins/LeafletObject.js';
+import Visibility from '../mixins/Visibility.js';
 
-import eventsBinder from '../utils/eventsBinder.js';
-import propsBinder from '../utils/propsBinder.js';
-
-const events = [
+const lfEvents = [
   'click',
   'dblclick',
   'mousedown',
@@ -24,7 +24,7 @@ const events = [
   'tooltipclose'
 ];
 
-const props = {
+const lfProps = {
   latLng: {
     type: Object,
   },
@@ -33,11 +33,6 @@ const props = {
   },
   style: {
     type: Object,
-  },
-  visible: {
-    type: Boolean,
-    custom: true,
-    default: true,
   },
   color: {
     type: String,
@@ -103,114 +98,94 @@ const props = {
 };
 
 export default {
-  props: props,
-  mounted() {
-    const options = {};
-    if (this.color) {
-      options.color = this.color;
-    }
-    if (this.radius) {
-      options.radius = this.radius;
-    }
-    this.mapObject = L.circle(this.latLng, options);
-    eventsBinder(this, this.mapObject, events);
-    propsBinder(this, this.mapObject, props);
-    if (this.$parent._isMounted)  {
-      this.deferredMountedTo(this.$parent.mapObject);
-    }
-  },
-  beforeDestroy() {
-    this.setVisible(false);
-  },
+  mixins: [LeafletObject, Visibility],
+  events: lfEvents,
+  props: lfProps,
   methods: {
-    deferredMountedTo(parent) {
-      this.parent = parent;
-      if (this.visible) {
-        this.mapObject.addTo(parent);
+    createLeafletObject() {
+      const options = {};
+      if (this.color) {
+        options.color = this.color;
       }
-    },
-    setVisible(newVal, oldVal) {
-      if (newVal == oldVal) return;
-      if (newVal) {
-        this.mapObject.addTo(this.parent);
-      } else {
-        this.parent.removeLayer(this.mapObject);
+      if (this.radius) {
+        options.radius = this.radius;
       }
+      return L.circle(this.latLng, options);
     },
     setColor(newVal, oldVal) {
       if (newVal == oldVal) return;
       if (newVal) {
-        this.mapObject.setStyle({ color: newVal });
+        this.$lfObj.setStyle({ color: newVal });
       }
     },
     setWeight(newVal, oldVal) {
       if (newVal == oldVal) return;
       if (newVal) {
-        this.mapObject.setStyle({ weight: newVal });
+        this.$lfObj.setStyle({ weight: newVal });
       }
     },
     setOpacity(newVal, oldVal) {
       if (newVal == oldVal) return;
       if (newVal) {
-        this.mapObject.setStyle({ opacity: newVal });
+        this.$lfObj.setStyle({ opacity: newVal });
       }
     },
     setLineCap(newVal, oldVal) {
       if (newVal == oldVal) return;
       if (newVal) {
-        this.mapObject.setStyle({ lineCap: newVal });
+        this.$lfObj.setStyle({ lineCap: newVal });
       }
     },
     setLineJoin(newVal, oldVal) {
       if (newVal == oldVal) return;
       if (newVal) {
-        this.mapObject.setStyle({ lineJoin: newVal });
+        this.$lfObj.setStyle({ lineJoin: newVal });
       }
     },
     setDashArray(newVal, oldVal) {
       if (newVal == oldVal) return;
       if (newVal) {
-        this.mapObject.setStyle({ dashArray: newVal });
+        this.$lfObj.setStyle({ dashArray: newVal });
       }
     },
     setDashOffset(newVal, oldVal) {
       if (newVal == oldVal) return;
       if (newVal) {
-        this.mapObject.setStyle({ dashOffset: newVal });
+        this.$lfObj.setStyle({ dashOffset: newVal });
       }
     },
     setFill(newVal, oldVal) {
       if (newVal == oldVal) return;
       if (newVal) {
-        this.mapObject.setStyle({ fill: newVal });
+        this.$lfObj.setStyle({ fill: newVal });
       }
     },
     setFillColor(newVal, oldVal) {
       if (newVal == oldVal) return;
       if (newVal) {
-        this.mapObject.setStyle({ fillColor: newVal });
+        this.$lfObj.setStyle({ fillColor: newVal });
       }
     },
     setFillOpacity(newVal, oldVal) {
       if (newVal == oldVal) return;
       if (newVal) {
-        this.mapObject.setStyle({ fillOpacity: newVal });
+        this.$lfObj.setStyle({ fillOpacity: newVal });
       }
     },
     setFillRule(newVal, oldVal) {
       if (newVal == oldVal) return;
       if (newVal) {
-        this.mapObject.setStyle({ fillRule: newVal });
+        this.$lfObj.setStyle({ fillRule: newVal });
       }
     },
     setClassName(newVal, oldVal) {
       if (newVal == oldVal) return;
       if (newVal) {
-        this.mapObject.setStyle({ className: newVal });
+        this.$lfObj.setStyle({ className: newVal });
       }
     },
     addLatLng(value) {
-      this.mapObject.addLatLng(value);
+      this.$lfObj.addLatLng(value);
     }
   }
 };

@@ -2,27 +2,39 @@
 </template>
 
 <script>
+import L from 'leaflet';
+import LeafletObject from '../mixins/LeafletObject.js';
+import AddToParent from '../mixins/AddToParent.js';
 
 export default {
-  props: ['geojson','options'],
-  mounted() {
-    this.$geoJSON = L.geoJSON(this.geojson, this.options);
-  },
+  mixins: [LeafletObject, AddToParent],
+  props: [
+    'geojson',
+    'options'
+  ],
   methods: {
-    deferredMountedTo(parent) {
-      this.$geoJSON.addTo(parent);
-      _.forEach(this.$children, (child) => {
-        child.deferredMountedTo(that);
-      });
+    createLeafletObject() {
+      return L.geoJSON(null, this.options);
+    },
+    afterDeferredMount(parent) {
+      this.addGeoJSONData(this.geojson);
     },
     addGeoJSONData(geojsonData) {
-      this.$geoJSON.addData(geojsonData);
+      if (this.$lfObj) {
+        this.$lfObj.addData(geojsonData);
+      }
     },
     getGeoJSONData() {
-      return this.$geoJSON.toGeoJSON();
+      if (this.$lfObj) {
+        return this.$lfObj.toGeoJSON();
+      }
+      return null;
     },
     getBounds() {
-      return this.$geoJSON.getBounds();
+      if (this.$lfObj) {
+        return this.$lfObj.getBounds();
+      }
+      return null;
     }
   }
 };

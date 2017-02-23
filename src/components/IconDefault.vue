@@ -1,11 +1,11 @@
 <template>
-  <div></div>
 </template>
 
 <script>
-import propsBinder from '../utils/propsBinder.js';
+import L from 'leaflet';
+import LeafletObject from '../mixins/LeafletObject.js';
 
-const props = {
+const lfProps = {
   imagePath: {
     type: String,
     custom: true,
@@ -14,16 +14,13 @@ const props = {
 };
 
 export default {
-  props: props,
-  mounted() {
-    L.Icon.Default.imagePath = this.imagePath;
-    propsBinder(this, this.mapObject, props);
-    if (this.$parent._isMounted)  {
-      this.deferredMountedTo(this.$parent.mapObject);
-    }
-  },
+  mixins: [LeafletObject],
+  props: lfProps,
   methods: {
-    deferredMountedTo(parent) {},
+    createLeafletObject() {
+      this.setImagePath(this.imagePath, null);
+      return null;
+    },
     setImagePath(newVal, oldVal) {
       L.Icon.Default.imagePath = newVal;
     },

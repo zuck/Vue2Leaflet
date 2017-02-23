@@ -5,11 +5,11 @@
 </template>
 
 <script>
+import L from 'leaflet';
+import LeafletObject from '../mixins/LeafletObject.js';
+import Visibility from '../mixins/Visibility.js';
 
-import eventsBinder from '../utils/eventsBinder.js';
-import propsBinder from '../utils/propsBinder.js';
-
-const events = [
+const lfEvents = [
   'click',
   'dblclick',
   'mousedown',
@@ -28,16 +28,11 @@ const events = [
   'tooltipclose'
 ];
 
-const props = {
+const lfProps = {
   draggable: {
     type: Boolean,
     custom: true,
     default: false,
-  },
-  visible: {
-    type: Boolean,
-    custom: true,
-    default: true,
   },
   latLng: {
     type: Object,
@@ -49,47 +44,26 @@ const props = {
 };
 
 export default {
-  props: props,
-  mounted() {
-    const options = {};
-    if (this.icon) {
-      options.icon = this.icon;
-    }
-    options.draggable = this.draggable;
-    this.mapObject = L.marker(this.latLng, options);
-    eventsBinder(this, this.mapObject, events);
-    propsBinder(this, this.mapObject, props);
-    if (this.$parent._isMounted)  {
-      this.deferredMountedTo(this.$parent.mapObject);
-    }
-  },
-  beforeDestroy() {
-    this.setVisible(false);
-  },
+  mixins: [LeafletObject, Visibility],
+  events: lfEvents,
+  props: lfProps,
   methods: {
-    deferredMountedTo(parent) {
-      this.parent = parent;
-      var that = this.mapObject;
-      _.forEach(this.$children, (child) => {
-        child.deferredMountedTo(that);
-      });
-      if (this.visible) {
-        this.mapObject.addTo(parent);
+    createLeafletObject() {
+      console.log("Creating marker...");
+      const options = {
+        draggable: this.draggable
+      };
+      if (this.icon) {
+        options.icon = this.icon;
       }
+      return L.marker(this.latLng, options);
+    },
+    beforeDeferredMount(parent) {
+      console.log("Before deferred mount marker...");
     },
     setDraggable(newVal, oldVal) {
-      if (this.mapObject.dragging) {
-        newVal ? this.mapObject.dragging.enable() : this.mapObject.dragging.disable();
-      }
-    },
-    setVisible(newVal, oldVal) {
-      if (newVal == oldVal) return;
-      if (this.mapObject) {
-        if (newVal) {
-          this.mapObject.addTo(this.parent);
-        } else {
-          this.parent.removeLayer(this.mapObject);
-        }
+      if (this.$lfObj.dragging) {
+        newVal ? this.$lfObj.dragging.enable() : this.$lfObj.dragging.disable();
       }
     },
   }

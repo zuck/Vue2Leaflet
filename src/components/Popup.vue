@@ -2,11 +2,12 @@
 </template>
 
 <script>
+import L from 'leaflet';
+import LeafletObject from '../mixins/LeafletObject.js';
+import AddToParent from '../mixins/AddToParent.js';
+import ContentEditable from '../mixins/ContentEditable.js';
 
-import eventsBinder from '../utils/eventsBinder.js';
-import propsBinder from '../utils/propsBinder.js';
-
-const events = [
+const lfEvents = [
   'add',
   'remove',
   'popupopen',
@@ -15,42 +16,28 @@ const events = [
   'tooltipclose'
 ];
 
-const props = {
-  content: {
-    custom: true,
-    default: '',
-  }
-};
-
 export default {
-  props: props,
-  mounted() {
-    this.mapObject = L.popup();
-    eventsBinder(this, this.mapObject, events);
-    propsBinder(this, this.mapObject, props);
-    if (this.$parent._isMounted)  {
-      this.deferredMountedTo(this.$parent.mapObject);
-    }
-  },
-  beforeDestroy() {
-    if (this.parent.getPopup()) {
-      this.parent.unbindPopup();
-    }
-  },
+  mixins: [LeafletObject, AddToParent, ContentEditable],
+  events: lfEvents,
   methods: {
-    deferredMountedTo(parent) {
-      this.parent = parent;
-      parent.bindPopup(this.content);
+    createLeafletObject() {
+      return L.popup();
     },
-    setContent(newVal, oldVal) {
-      if (newVal) {
-        this.parent.bindPopup(this.content);
-      } else {
-        if (this.parent.getPopup()) {
-          this.parent.unbindPopup();
-        }
+    addToParent(parent) {
+      if (this.$lfObj && parent && parent.$lfObj) {
+        this.$lfParent = parent.$lfObj;
+        this.$lfParent.bindPopup(this.$lfObj);
       }
     },
+    removeFromParent() {
+      var parentObj = null;
+      if (this.$lfObj && this.$lfParent && this.$lfParent.getPopup() === this.$lfObj) {
+        parentObj = this.$lfParent;
+        this.$lfParent.unbindPopup();
+      }
+      this.$lfParent = null;
+      return parentObj;
+    }
   }
 };
 </script>

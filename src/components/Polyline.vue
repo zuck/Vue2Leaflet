@@ -5,11 +5,11 @@
 </template>
 
 <script>
+import L from 'leaflet';
+import LeafletObject from '../mixins/LeafletObject.js';
+import Visibility from '../mixins/Visibility.js';
 
-import eventsBinder from '../utils/eventsBinder.js';
-import propsBinder from '../utils/propsBinder.js';
-
-const events = [
+const lfEvents = [
   'click',
   'dblclick',
   'mousedown',
@@ -24,18 +24,13 @@ const events = [
   'tooltipclose'
 ];
 
-const props = {
+const lfProps = {
   latLngs: {
     type: Array,
     default: []
   },
   style: {
     type: Object,
-  },
-  visible: {
-    type: Boolean,
-    custom: true,
-    default: true,
   },
   color: {
     type: String,
@@ -45,41 +40,21 @@ const props = {
 };
 
 export default {
-  props: props,
-  mounted() {
-    this.mapObject = L.polyline(this.latLngs, { color: this.color });
-    eventsBinder(this, this.mapObject, events);
-    propsBinder(this, this.mapObject, props);
-    if (this.$parent._isMounted)  {
-      this.deferredMountedTo(this.$parent.mapObject);
-    }
-  },
-  beforeDestroy() {
-    this.setVisible(false);
-  },
+  mixins: [LeafletObject, Visibility],
+  events: lfEvents,
+  props: lfProps,
   methods: {
-    deferredMountedTo(parent) {
-      this.parent = parent;
-      if (this.visible) {
-        this.mapObject.addTo(parent);
-      }
-    },
-    setVisible(newVal, oldVal) {
-      if (newVal == oldVal) return;
-      if (newVal) {
-        this.mapObject.addTo(this.parent);
-      } else {
-        this.parent.removeLayer(this.mapObject);
-      }
+    createLeafletObject() {
+      return L.polyline(this.latLngs, { color: this.color });
     },
     setColor(newVal, oldVal) {
       if (newVal == oldVal) return;
       if (newVal) {
-        this.mapObject.setStyle({ color: newVal });
+        this.$lfObj.setStyle({ color: newVal });
       }
     },
     addLatLng(value) {
-      this.mapObject.addLatLng(value);
+      this.$lfObj.addLatLng(value);
     }
   }
 };

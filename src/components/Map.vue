@@ -1,22 +1,18 @@
 <template>
   <div class="map-container">
     <div class="map-container">
-      <div id="map"></div>
+      <div id="map">
+      </div>
     </div>
-    <div>
-      <slot></slot>
-    </div>
+    <slot></slot>
   </div>
 </template>
 
 <script>
-import _ from 'lodash';
-import Vue from 'vue'
 import L from 'leaflet';
-import eventsBinder from '../utils/eventsBinder.js';
-import propsBinder from '../utils/propsBinder.js';
+import LeafletObject from '../mixins/LeafletObject.js';
 
-const events = [
+const lfEvents = [
   'click',
   'dblclick',
   'mousedown',
@@ -52,9 +48,9 @@ const events = [
   'locationerror',
   'popupopen',
   'popupclose'
-];
+]
 
-const props = {
+const lfProps = {
   center: {
     custom: true,
     default: undefined,
@@ -91,38 +87,41 @@ const props = {
     type: Boolean,
     default: false
   }
-};
+}
 
 export default {
-  props: props,
-  mounted() {
-    this.mapObject = L.map(this.$el, {
-      center:this.center,
-      zoom:this.zoom,
-      minZoom:this.minZoom,
-      maxZoom:this.maxZoom,
-      worldCopyJump:this.worldCopyJump
-    });
-    eventsBinder(this, this.mapObject, events);
-    propsBinder(this, this.mapObject, props);
-    var that = this.mapObject;
-    _.forEach(this.$children, (child) => {
-      child.deferredMountedTo(that);
-    });
-    this.setBounds(this.bounds);
-    this.mapObject.whenReady(function() {
-      this.$emit('l-ready')
-    }, this);
+  mixins: [LeafletObject],
+  events: lfEvents,
+  props: lfProps,
+  mounted: function() {
+    console.log("Starting deferred mount of map...");
+    this.deferredMountedTo(this.$lfObj);
   },
   methods: {
+    createLeafletObject() {
+      console.log("Creating map...");
+      return L.map(this.$el, {
+        center: this.center,
+        zoom: this.zoom,
+        minZoom: this.minZoom,
+        maxZoom: this.maxZoom,
+        worldCopyJump: this.worldCopyJump
+      });
+    },
+    afterDeferredMount(parent) {
+      console.log("After deferred mount map...");
+      this.setBounds(this.bounds);
+      this.$lfObj.whenReady(function() {
+        this.$emit('l-ready')
+      }, this);
+    },
     setCenter(newVal, oldVal) {
-      this.mapObject.setView(newVal, this.zoom);
+      this.$lfObj.setView(newVal, this.zoom);
     },
     setBounds(newVal, oldVal) {
       if (!(newVal && newVal.isValid())) {
         return;
       }
-
       var options = {};
       if (this.padding) {
         options.padding = this.padding;
@@ -134,7 +133,7 @@ export default {
           options.paddingTopLeft = this.paddingTopLeft;
         }
       }
-      this.mapObject.fitBounds(newVal, options);
+      this.$lfObj.fitBounds(newVal, options);
     },
     setPaddingBottomRight(newVal, oldVal) {
       this.paddingBottomRight = newVal;
@@ -149,7 +148,7 @@ export default {
 }
 </script>
 
-<style type="text/css">
+<style>
   #map {
     height: 100%;
     width: 100%;
