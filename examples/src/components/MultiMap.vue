@@ -3,7 +3,7 @@
     <div id="top_div">
       <h2>Two maps</h2>
       <v-map :zoom="zoom" :center="center" :min-zoom="minZoom" :max-zoom="maxZoom" v-on:l-zoomanim="zoomChanged">
-        <v-tilelayer :url="url" :attribution="attribution" :token="token"></v-tilelayer>
+        <v-tilelayer :url="url" :options="tileLayerOptions"></v-tilelayer>
         <v-marker v-for="item in markers" :lat-lng="item.position" :visible="item.visible" :draggable="item.draggable"
         v-on:l-click="alert(item)" v-on:l-move="markerMoved($event, item)"></v-marker>
         <v-poly v-for="item in polylines" :lat-lngs="item.points" :visible="item.visible" v-on:l-click="alert(item)"></v-poly>
@@ -17,7 +17,7 @@
     </div>
     <div id="bottom_div">
       <v-map :zoom="zoom" :center="center" :min-zoom="minZoom" :max-zoom="maxZoom" v-on:l-zoomanim="zoomChanged">
-        <v-tilelayer :url="url" :attribution="attribution" :token="token"></v-tilelayer>
+        <v-tilelayer :url="url" :options="tileLayerOptions"></v-tilelayer>
         <v-marker v-for="item in markers" :lat-lng="item.position" :visible="item.visible" :draggable="item.draggable"
         v-on:l-click="alert(item)" v-on:l-move="markerMoved($event, item)"></v-marker>
         <v-poly v-for="item in polylines" :lat-lngs="item.points" :visible="item.visible" v-on:l-click="alert(item)"></v-poly>
@@ -104,8 +104,10 @@ export default {
       maxZoom: 20,
       opacity: 0.6,
       url: 'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-      attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
-      token: 'your token if using mapbox',
+      tileLayerOptions: {
+        attribution:'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+        token: 'your token if using mapbox'
+      },
       markers: [
         { position : {lat:51.505, lng:-0.09}, draggable: true, visible: true},
         { position : {lat:51.8905, lng:-0.09}, draggable: true, visible: false},

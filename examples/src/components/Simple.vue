@@ -7,7 +7,7 @@
     </div>
     <div id="bottom_div">
       <v-map :zoom="zoom" :center="center">
-        <v-tilelayer :url="url" :attribution="attribution"></v-tilelayer>
+        <v-tilelayer :url="url" :options="tileLayerOptions"></v-tilelayer>
         <v-marker :lat-lng="marker"></v-marker>
       </v-map>
     </div>
@@ -29,7 +29,9 @@ export default {
       zoom:13,
       center:[47.413220, -1.219482],
       url:'http://{s}.tile.osm.org/{z}/{x}/{y}.png',
-      attribution:'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors',
+      tileLayerOptions: {
+        attribution:'&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+      },
       marker: L.latLng(47.413220, -1.219482),
     }
   }

@@ -21,11 +21,12 @@ export default {
   events: lfEvents,
   methods: {
     createLeafletObject() {
+      console.log("Creating Tooltip...");
       return L.tooltip();
     },
     addToParent(parent) {
-      if (this.$lfObj && parent && parent.$lfObj) {
-        this.$lfParent = parent.$lfObj;
+      if (this.$lfObj && parent) {
+        this.$lfParent = parent;
         this.$lfParent.bindTooltip(this.$lfObj);
       }
     },

@@ -5,29 +5,33 @@ module.exports = {
   events: [],
   props: [],
   mounted: function() {
-    console.log("Creating leaflet object...");
     this.$lfObj = this.createLeafletObject();
     if (this.$lfObj) {
-      console.log("Binding props and events...");
       eventsBinder(this, this.$lfObj, this.events);
       propsBinder(this, this.$lfObj, this.props);
     }
-    console.log("Created leaflet object...");
+    if (this.$lfObj && this.$parent && this.$parent.$lfObj) {
+      this.deferredMountedTo(this.$parent.$lfObj);
+    }
   },
   methods: {
     deferredMountedTo: function(parent) {
-      console.log("Before deferred mount of object...");
       this.beforeDeferredMount(parent);
-      if (parent) {
-        console.log("Starting deferred mount of object children...");
+      if (this.$lfObj) {
+        var newParent = parent;
+        if (this.$parent && this.$parent.$lfObj) {
+          newParent = this.$lfObj;
+        }
         this.$children.forEach(function(child) {
           if (child.deferredMountedTo) {
-            child.deferredMountedTo(parent);
+            child.deferredMountedTo(newParent);
           }
         });
       }
-      console.log("After deferred mount of object...");
       this.afterDeferredMount(parent);
+    },
+    createLeafletObject: function() {
+      return null;
     },
     beforeDeferredMount: function(parent) {
       // Do nothing.

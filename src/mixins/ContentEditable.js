@@ -1,4 +1,7 @@
+import AddToParent from './AddToParent.js';
+
 module.exports = {
+  mixins: [AddToParent],
   props: {
     content: {
       custom: true,

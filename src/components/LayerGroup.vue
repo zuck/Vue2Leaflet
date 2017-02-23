@@ -13,6 +13,7 @@ export default {
   mixins: [LeafletObject, Visibility],
   methods: {
     createLeafletObject() {
+      console.log("Creating layer group...");
       return L.layerGroup();
     }
   }

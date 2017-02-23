@@ -45,6 +45,7 @@ export default {
   props: lfProps,
   methods: {
     createLeafletObject() {
+      console.log("Creating polyline...");
       return L.polyline(this.latLngs, { color: this.color });
     },
     setColor(newVal, oldVal) {

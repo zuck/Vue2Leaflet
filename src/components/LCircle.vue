@@ -103,6 +103,7 @@ export default {
   props: lfProps,
   methods: {
     createLeafletObject() {
+      console.log("Creating circle...");
       const options = {};
       if (this.color) {
         options.color = this.color;

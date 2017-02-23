@@ -18,6 +18,7 @@ export default {
   props: lfProps,
   methods: {
     createLeafletObject() {
+      console.log("Creating image path...");
       this.setImagePath(this.imagePath, null);
       return null;
     },

@@ -94,7 +94,6 @@ export default {
   events: lfEvents,
   props: lfProps,
   mounted: function() {
-    console.log("Starting deferred mount of map...");
     this.deferredMountedTo(this.$lfObj);
   },
   methods: {
@@ -109,7 +108,6 @@ export default {
       });
     },
     afterDeferredMount(parent) {
-      console.log("After deferred mount map...");
       this.setBounds(this.bounds);
       this.$lfObj.whenReady(function() {
         this.$emit('l-ready')

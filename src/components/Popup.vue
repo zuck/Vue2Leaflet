@@ -21,11 +21,13 @@ export default {
   events: lfEvents,
   methods: {
     createLeafletObject() {
+      console.log("Creating Popup...");
       return L.popup();
     },
     addToParent(parent) {
-      if (this.$lfObj && parent && parent.$lfObj) {
-        this.$lfParent = parent.$lfObj;
+      if (this.$lfObj && parent) {
+        console.log(parent);
+        this.$lfParent = parent;
         this.$lfParent.bindPopup(this.$lfObj);
       }
     },

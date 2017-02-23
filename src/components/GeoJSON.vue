@@ -14,6 +14,7 @@ export default {
   ],
   methods: {
     createLeafletObject() {
+      console.log("Creating GeoJSON...");
       return L.geoJSON(null, this.options);
     },
     afterDeferredMount(parent) {

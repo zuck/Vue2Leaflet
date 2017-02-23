@@ -58,9 +58,6 @@ export default {
       }
       return L.marker(this.latLng, options);
     },
-    beforeDeferredMount(parent) {
-      console.log("Before deferred mount marker...");
-    },
     setDraggable(newVal, oldVal) {
       if (this.$lfObj.dragging) {
         newVal ? this.$lfObj.dragging.enable() : this.$lfObj.dragging.disable();

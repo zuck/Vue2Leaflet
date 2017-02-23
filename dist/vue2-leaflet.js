@@ -87,29 +87,33 @@ return /******/ (function(modules) { // webpackBootstrap
 	  events: [],
 	  props: [],
 	  mounted: function mounted() {
-	    console.log("Creating leaflet object...");
 	    this.$lfObj = this.createLeafletObject();
 	    if (this.$lfObj) {
-	      console.log("Binding props and events...");
 	      (0, _eventsBinder2.default)(this, this.$lfObj, this.events);
 	      (0, _propsBinder2.default)(this, this.$lfObj, this.props);
 	    }
-	    console.log("Created leaflet object...");
+	    if (this.$lfObj && this.$parent && this.$parent.$lfObj) {
+	      this.deferredMountedTo(this.$parent.$lfObj);
+	    }
 	  },
 	  methods: {
 	    deferredMountedTo: function deferredMountedTo(parent) {
-	      console.log("Before deferred mount of object...");
 	      this.beforeDeferredMount(parent);
-	      if (parent) {
-	        console.log("Starting deferred mount of object children...");
+	      if (this.$lfObj) {
+	        var newParent = parent;
+	        if (this.$parent && this.$parent.$lfObj) {
+	          newParent = this.$lfObj;
+	        }
 	        this.$children.forEach(function (child) {
 	          if (child.deferredMountedTo) {
-	            child.deferredMountedTo(parent);
+	            child.deferredMountedTo(newParent);
 	          }
 	        });
 	      }
-	      console.log("After deferred mount of object...");
 	      this.afterDeferredMount(parent);
+	    },
+	    createLeafletObject: function createLeafletObject() {
+	      return null;
 	    },
 	    beforeDeferredMount: function beforeDeferredMount(parent) {},
 	    afterDeferredMount: function afterDeferredMount(parent) {}
@@ -187,11 +191,10 @@ return /******/ (function(modules) { // webpackBootstrap
 	  },
 	
 	  methods: {
-	    afterDeferredMount: function afterDeferredMount(parent) {
+	    beforeDeferredMount: function beforeDeferredMount(parent) {
 	      this.addToParent(parent);
 	    },
 	    addToParent: function addToParent(parent) {
-	      console.log("Adding to parent...");
 	      if (this.$lfObj && parent) {
 	        this.$lfParent = parent;
 	        if (!this.$lfParent.hasLayer(this.$lfObj)) {
@@ -200,7 +203,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	    },
 	    removeFromParent: function removeFromParent() {
-	      console.log("Removing from parent...");
 	      var parentObj = null;
 	      if (this.$lfObj && this.$lfParent) {
 	        parentObj = this.$lfParent;
@@ -253,11 +255,18 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 6 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
+	var _AddToParent = __webpack_require__(4);
+	
+	var _AddToParent2 = _interopRequireDefault(_AddToParent);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
 	module.exports = {
+	  mixins: [_AddToParent2.default],
 	  props: {
 	    content: {
 	      custom: true,
@@ -313,6 +322,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  props: ['geojson', 'options'],
 	  methods: {
 	    createLeafletObject: function createLeafletObject() {
+	      console.log("Creating GeoJSON...");
 	      return _leaflet2.default.geoJSON(null, this.options);
 	    },
 	    afterDeferredMount: function afterDeferredMount(parent) {
@@ -371,6 +381,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  props: lfProps,
 	  methods: {
 	    createLeafletObject: function createLeafletObject() {
+	      console.log("Creating image path...");
 	      this.setImagePath(this.imagePath, null);
 	      return null;
 	    },
@@ -485,6 +496,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  props: lfProps,
 	  methods: {
 	    createLeafletObject: function createLeafletObject() {
+	      console.log("Creating circle...");
 	      var options = {};
 	      if (this.color) {
 	        options.color = this.color;
@@ -600,6 +612,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  mixins: [_LeafletObject2.default, _Visibility2.default],
 	  methods: {
 	    createLeafletObject: function createLeafletObject() {
+	      console.log("Creating layer group...");
 	      return _leaflet2.default.layerGroup();
 	    }
 	  }
@@ -671,7 +684,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	  events: lfEvents,
 	  props: lfProps,
 	  mounted: function mounted() {
-	    console.log("Starting deferred mount of map...");
 	    this.deferredMountedTo(this.$lfObj);
 	  },
 	  methods: {
@@ -686,7 +698,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      });
 	    },
 	    afterDeferredMount: function afterDeferredMount(parent) {
-	      console.log("After deferred mount map...");
 	      this.setBounds(this.bounds);
 	      this.$lfObj.whenReady(function () {
 	        this.$emit('l-ready');
@@ -782,9 +793,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	      }
 	      return _leaflet2.default.marker(this.latLng, options);
 	    },
-	    beforeDeferredMount: function beforeDeferredMount(parent) {
-	      console.log("Before deferred mount marker...");
-	    },
 	    setDraggable: function setDraggable(newVal, oldVal) {
 	      if (this.$lfObj.dragging) {
 	        newVal ? this.$lfObj.dragging.enable() : this.$lfObj.dragging.disable();
@@ -840,6 +848,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  props: lfProps,
 	  methods: {
 	    createLeafletObject: function createLeafletObject() {
+	      console.log("Creating polyline...");
 	      return _leaflet2.default.polyline(this.latLngs, { color: this.color });
 	    },
 	    setColor: function setColor(newVal, oldVal) {
@@ -889,11 +898,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	  events: lfEvents,
 	  methods: {
 	    createLeafletObject: function createLeafletObject() {
+	      console.log("Creating Popup...");
 	      return _leaflet2.default.popup();
 	    },
 	    addToParent: function addToParent(parent) {
-	      if (this.$lfObj && parent && parent.$lfObj) {
-	        this.$lfParent = parent.$lfObj;
+	      if (this.$lfObj && parent) {
+	        console.log(parent);
+	        this.$lfParent = parent;
 	        this.$lfParent.bindPopup(this.$lfObj);
 	      }
 	    },
@@ -939,17 +950,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	exports.default = {
 	  mixins: [_LeafletObject2.default, _AddToParent2.default, _Layer2.default],
-	  props: ['url', 'attribution', 'token'],
+	  props: ['url', 'options'],
 	  methods: {
 	    createLeafletObject: function createLeafletObject() {
 	      console.log("Creating tile layer...");
-	      return _leaflet2.default.tileLayer(this.url, {
-	        attribution: this.attribution,
-	        token: this.token
-	      });
-	    },
-	    beforeDeferredMount: function beforeDeferredMount(parent) {
-	      console.log("Before deferred mount tile layer...");
+	      return _leaflet2.default.tileLayer(this.url, this.options);
 	    }
 	  }
 	};
@@ -989,11 +994,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	  events: lfEvents,
 	  methods: {
 	    createLeafletObject: function createLeafletObject() {
+	      console.log("Creating Tooltip...");
 	      return _leaflet2.default.tooltip();
 	    },
 	    addToParent: function addToParent(parent) {
-	      if (this.$lfObj && parent && parent.$lfObj) {
-	        this.$lfParent = parent.$lfObj;
+	      if (this.$lfObj && parent) {
+	        this.$lfParent = parent;
 	        this.$lfParent.bindTooltip(this.$lfObj);
 	      }
 	    },
